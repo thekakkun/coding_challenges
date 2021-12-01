@@ -8,14 +8,13 @@ def sweep_1(report):
     return increase_count
 
 
-def sweep_2(report, window_size):
+def sweep_2(report, window_size=3):
     windowed_report = [sum(report[x-window_size:x])
                        for x in range(window_size, len(report)+1)]
-
     return sweep_1(windowed_report)
 
 
 with open('./input/01.txt', 'r') as f:
-    report = [int(x) for x in f.read().strip().split('\n')]
+    report = [int(x) for x in f.read().splitlines()]
     print(sweep_1(report))
-    print(sweep_2(report, 3))
+    print(sweep_2(report))
