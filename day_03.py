@@ -48,7 +48,7 @@ def get_rating(report, value):
             return report[0]
 
 
-with open('./input/03.txt', 'r') as f:
+with open('./input/day_03.txt', 'r') as f:
     report = f.read().splitlines()
     print(diag_1(report))
     print(diag_2(report))
