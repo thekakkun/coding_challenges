@@ -74,3 +74,7 @@ class TestDay05(unittest.TestCase):
         self.assertEqual(
             day_05.find_vents_2(day_05.parse_input(self.test_input)),
             12)
+
+
+if __name__ == '__main__':
+    unittest.main()

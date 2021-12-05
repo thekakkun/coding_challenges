@@ -3,6 +3,32 @@
 import math
 
 
+def parse_bingo(input):
+    numbers, boards = input.strip().split('\n', maxsplit=1)
+
+    numbers = (int(x) for x in numbers.split(','))
+    boards = list(
+        list(int(y) for y in x.replace('\n', ' ').split()) for x in boards.strip().split('\n\n')
+    )
+
+    return (numbers, boards)
+
+
+def is_bingo(board):
+    board_size = int(math.sqrt(len(board)))
+    bingo_match = [-1] * board_size
+
+    if board.count(-1) < board_size:
+        return False
+    else:
+        return (
+            bingo_match in (board[i::board_size] for i in range(board_size))
+            or
+            bingo_match in (
+                board[i*board_size:(i+1)*board_size] for i in range(board_size))
+        )
+
+
 def play_bingo_1(game):
     (numbers, boards) = game
 
@@ -28,32 +54,6 @@ def play_bingo_2(game):
                         return n * sum(x for x in boards[i] if x != -1)
                     else:
                         remainder -= 1
-
-
-def is_bingo(board):
-    board_size = int(math.sqrt(len(board)))
-    bingo_match = [-1] * board_size
-
-    if board.count(-1) < board_size:
-        return False
-    else:
-        return (
-            bingo_match in (board[i::board_size] for i in range(board_size))
-            or
-            bingo_match in (
-                board[i*board_size:(i+1)*board_size] for i in range(board_size))
-        )
-
-
-def parse_bingo(input):
-    numbers, boards = input.strip().split('\n', maxsplit=1)
-
-    numbers = (int(x) for x in numbers.split(','))
-    boards = list(
-        list(int(y) for y in x.replace('\n', ' ').split()) for x in boards.strip().split('\n\n')
-    )
-
-    return (numbers, boards)
 
 
 with open('input/day_04.txt', 'r') as f:

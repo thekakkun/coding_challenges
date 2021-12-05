@@ -4,17 +4,13 @@
 import itertools
 
 
-def find_vents_1(vents):
-    vents = (x for x in vents if x[0][0] == x[1][0] or x[0][1] == x[1][1])
-    vent_map = map_vents(vents)
-
-    return sum(1 for _, v in vent_map.items() if 2 <= v)
-
-
-def find_vents_2(vents):
-    vent_map = map_vents(vents)
-
-    return sum(1 for _, v in vent_map.items() if 2 <= v)
+def parse_input(input):
+    return tuple(
+        tuple(
+            tuple(int(z) for z in y.split(',')
+                  ) for y in x.split(' -> ')
+        ) for x in input.splitlines()
+    )
 
 
 def map_vents(vents):
@@ -33,13 +29,17 @@ def map_vents(vents):
     return vent_map
 
 
-def parse_input(input):
-    return tuple(
-        tuple(
-            tuple(int(z) for z in y.split(',')
-                  ) for y in x.split(' -> ')
-        ) for x in input.splitlines()
-    )
+def find_vents_1(vents):
+    vents = (x for x in vents if x[0][0] == x[1][0] or x[0][1] == x[1][1])
+    vent_map = map_vents(vents)
+
+    return sum(1 for _, v in vent_map.items() if 2 <= v)
+
+
+def find_vents_2(vents):
+    vent_map = map_vents(vents)
+
+    return sum(1 for _, v in vent_map.items() if 2 <= v)
 
 
 with open('input/day_05.txt', 'r') as f:
