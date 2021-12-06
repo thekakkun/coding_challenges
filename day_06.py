@@ -7,20 +7,8 @@ def count_fish(state):
     return {x: state.count(x) for x in set(state)}
 
 
-def sim_fish(state, days=80):
+def sim_fish(state, rule, days=80):
     count = count_fish(state)
-
-    rule = {
-        0: (8, 6),
-        1: (0,),
-        2: (1,),
-        3: (2,),
-        4: (3,),
-        5: (4,),
-        6: (5,),
-        7: (6,),
-        8: (7,),
-    }
 
     while 0 < days:
         next_count = {}
@@ -35,5 +23,16 @@ def sim_fish(state, days=80):
 
 with open('input/day_06.txt', 'r') as f:
     input = [int(x) for x in f.read().strip().split(',')]
-    print(sim_fish(input, 80))
-    print(sim_fish(input, 256))
+    rule = {
+        0: (8, 6),
+        1: (0,),
+        2: (1,),
+        3: (2,),
+        4: (3,),
+        5: (4,),
+        6: (5,),
+        7: (6,),
+        8: (7,),
+    }
+    print(sim_fish(input, rule, 80))
+    print(sim_fish(input, rule, 256))
