@@ -3,12 +3,8 @@
 import functools
 
 
-def count_fish(state):
-    return {x: state.count(x) for x in set(state)}
-
-
-def sim_fish(state, rule, days=80):
-    count = count_fish(state)
+def sim_fish(state, rule, days):
+    count = {x: state.count(x) for x in set(state)}
 
     while 0 < days:
         next_count = {}
