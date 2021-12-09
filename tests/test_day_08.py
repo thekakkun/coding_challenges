@@ -25,3 +25,6 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             day_08.count_sums(test_disp_data),
             61229
         )
+
+if __name__ == '__main__':
+    unittest.main()
