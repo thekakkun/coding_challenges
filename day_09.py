@@ -35,18 +35,25 @@ def get_basin(heightmap, low_point, lower_than):
 
     basin = set((low_point,))
     frontier = list(lower_than[lp_r][lp_c])
+    visited = set()
 
     while frontier:
+        print(visited)
         (p_r, p_c) = frontier.pop()
-        if (
+        if (p_r, p_c) in visited:
+            continue
+        elif (
             (p_r, p_c) in basin or
             p_r not in range(rows) or
-            p_c not in range(cols)
+            p_c not in range(cols) or
+            heightmap[p_r][p_c] == 9
         ):
+            visited.add((p_r, p_c))
             continue
         else:
-            if heightmap[p_r][p_c] != 9:
-                basin.add((p_r, p_c))
+            basin.add((p_r, p_c))
+            visited.add((p_r, p_c))
+
             frontier += list(lower_than[p_r][p_c])
 
     return basin
