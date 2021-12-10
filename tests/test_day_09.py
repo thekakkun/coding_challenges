@@ -1,5 +1,6 @@
-import day_09
 import unittest
+
+import day_09
 
 
 class TestDay09(unittest.TestCase):
@@ -18,7 +19,8 @@ class TestDay09(unittest.TestCase):
 
     def test_get_basin(self):
         self.assertEqual(
-            day_09.get_basin(self.test_heightmap, (0, 1)),
+            day_09.get_basin(self.test_heightmap, (0, 1),
+                             day_09.get_lower_than(self.test_heightmap)),
             set((
                 (0, 0),
                 (1, 0),

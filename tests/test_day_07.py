@@ -1,6 +1,6 @@
-import day_07
-
 import unittest
+
+import day_07
 
 
 class TestDay07(unittest.TestCase):
