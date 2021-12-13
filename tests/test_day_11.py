@@ -2,9 +2,7 @@ import unittest
 
 import day_11
 
-
-class TestDay11(unittest.TestCase):
-    test_input_0 = '''5483143223
+test_input_0 = '''5483143223
 2745854711
 5264556173
 6141336146
@@ -15,7 +13,7 @@ class TestDay11(unittest.TestCase):
 4846848554
 5283751526'''
 
-    test_input_1 = '''6594254334
+test_input_1 = '''6594254334
 3856965822
 6375667284
 7252447257
@@ -26,7 +24,7 @@ class TestDay11(unittest.TestCase):
 5957959665
 6394862637'''
 
-    test_input_2 = '''8807476555
+test_input_2 = '''8807476555
 5089087054
 8597889608
 8485769600
@@ -37,29 +35,31 @@ class TestDay11(unittest.TestCase):
 9000000876
 8700006848'''
 
+
+class TestDay11(unittest.TestCase):
     def test_run_step(self):
         self.assertEqual(
-            day_11.run_step(day_11.parse_input(self.test_input_0)),
+            day_11.run_step(day_11.parse_input(test_input_0)),
             (
                 0,
-                day_11.parse_input(self.test_input_1)
+                day_11.parse_input(test_input_1)
             )
         )
         self.assertEqual(
-            day_11.run_step(day_11.parse_input(self.test_input_1)),
+            day_11.run_step(day_11.parse_input(test_input_1)),
             (
                 35,
-                day_11.parse_input(self.test_input_2)
+                day_11.parse_input(test_input_2)
             )
         )
 
     def test_count_flashes(self):
         self.assertEqual(
-            day_11.count_flashes(day_11.parse_input(self.test_input_0), 100), 1656)
+            day_11.count_flashes(day_11.parse_input(test_input_0), 100), 1656)
 
     def test_find_simul(self):
         self.assertEqual(
-            day_11.find_simul(day_11.parse_input(self.test_input_0)),
+            day_11.find_simul(day_11.parse_input(test_input_0)),
             195
         )
 

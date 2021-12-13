@@ -2,9 +2,7 @@ import unittest
 
 import day_12
 
-
-class TestDay12(unittest.TestCase):
-    test_input_1 = '''start-A
+test_input_1 = '''start-A
 start-b
 A-c
 A-b
@@ -12,7 +10,7 @@ b-d
 A-end
 b-end'''
 
-    test_input_2 = '''dc-end
+test_input_2 = '''dc-end
 HN-start
 start-kj
 dc-start
@@ -23,7 +21,7 @@ kj-sa
 kj-HN
 kj-dc'''
 
-    test_input_3 = '''fs-end
+test_input_3 = '''fs-end
 he-DX
 fs-he
 start-DX
@@ -42,8 +40,10 @@ zg-he
 pj-fs
 start-RW'''
 
+
+class TestDay12(unittest.TestCase):
     def test_parse_input(self):
-        test_caves_1 = day_12.parse_input(self.test_input_1)
+        test_caves_1 = day_12.parse_input(test_input_1)
         self.assertEqual(
             test_caves_1,
             {
@@ -57,7 +57,7 @@ start-RW'''
         )
 
     def test_get_paths_1(self):
-        test_caves_1 = day_12.parse_input(self.test_input_1)
+        test_caves_1 = day_12.parse_input(test_input_1)
         self.assertEqual(
             day_12.get_paths(test_caves_1, day_12.successors_1),
             {
@@ -73,7 +73,7 @@ start-RW'''
                 ('start', 'b', 'end')
             }
         )
-        test_caves_2 = day_12.parse_input(self.test_input_2)
+        test_caves_2 = day_12.parse_input(test_input_2)
         self.assertEqual(
             day_12.get_paths(test_caves_2, day_12.successors_1),
             {
@@ -97,12 +97,12 @@ start-RW'''
                 ('start', 'kj', 'dc', 'HN', 'end'),
                 ('start', 'kj', 'dc', 'end')}
         )
-        test_caves_3 = day_12.parse_input(self.test_input_3)
+        test_caves_3 = day_12.parse_input(test_input_3)
         self.assertEqual(
             len(day_12.get_paths(test_caves_3, day_12.successors_1)), 226)
 
     def test_get_paths_2(self):
-        test_caves_1 = day_12.parse_input(self.test_input_1)
+        test_caves_1 = day_12.parse_input(test_input_1)
         self.assertEqual(
             day_12.get_paths(test_caves_1, day_12.successors_2),
             {
@@ -144,10 +144,10 @@ start-RW'''
                 ('start', 'b', 'end'),
             }
         )
-        test_caves_2 = day_12.parse_input(self.test_input_2)
+        test_caves_2 = day_12.parse_input(test_input_2)
         self.assertEqual(
             len(day_12.get_paths(test_caves_2, day_12.successors_2)), 103)
-        test_caves_3 = day_12.parse_input(self.test_input_3)
+        test_caves_3 = day_12.parse_input(test_input_3)
         self.assertEqual(
             len(day_12.get_paths(test_caves_3, day_12.successors_2)), 3509)
 

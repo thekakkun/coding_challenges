@@ -2,9 +2,7 @@ import unittest
 
 import day_04
 
-
-class TestDay04(unittest.TestCase):
-    test_input = '''
+test_input = '''
 7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
 22 13 17 11  0
@@ -26,9 +24,11 @@ class TestDay04(unittest.TestCase):
 2  0 12  3  7
 '''
 
+
+class TestDay04(unittest.TestCase):
     def test_parse_bingo(self):
         self.assertEqual(
-            day_04.parse_bingo(self.test_input)[1],
+            day_04.parse_bingo(test_input)[1],
             [
                 [
                     22, 13, 17, 11, 0,
@@ -98,13 +98,13 @@ class TestDay04(unittest.TestCase):
 
     def test_play_bingo_1(self):
         self.assertEqual(
-            day_04.play_bingo_1(day_04.parse_bingo(self.test_input)),
+            day_04.play_bingo_1(day_04.parse_bingo(test_input)),
             4512
         )
 
     def test_play_bingo_2(self):
         self.assertEqual(
-            day_04.play_bingo_2(day_04.parse_bingo(self.test_input)),
+            day_04.play_bingo_2(day_04.parse_bingo(test_input)),
             1924
         )
 

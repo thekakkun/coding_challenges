@@ -2,9 +2,7 @@ import unittest
 
 import day_05
 
-
-class TestDay05(unittest.TestCase):
-    test_input = """0,9 -> 5,9
+test_input = """0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
 2,2 -> 2,1
@@ -16,9 +14,11 @@ class TestDay05(unittest.TestCase):
 5,5 -> 8,2
 """
 
+
+class TestDay05(unittest.TestCase):
     def test_parse_input(self):
         self.assertEqual(
-            day_05.parse_input(self.test_input),
+            day_05.parse_input(test_input),
             (
                 ((0, 9), (5, 9)),
                 ((8, 0), (0, 8)),
@@ -68,12 +68,12 @@ class TestDay05(unittest.TestCase):
 
     def test_find_vents_1(self):
         self.assertEqual(
-            day_05.find_vents_1(day_05.parse_input(self.test_input)),
+            day_05.find_vents_1(day_05.parse_input(test_input)),
             5)
 
     def test_find_vents_2(self):
         self.assertEqual(
-            day_05.find_vents_2(day_05.parse_input(self.test_input)),
+            day_05.find_vents_2(day_05.parse_input(test_input)),
             12)
 
 
