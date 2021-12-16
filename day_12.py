@@ -1,7 +1,7 @@
 # https://adventofcode.com/2021/day/12
 
-def parse_input(input):
-    links = [x.split('-') for x in input.strip().splitlines()]
+def parse_input(text):
+    links = [x.split('-') for x in text.strip().splitlines()]
     caves = {}
 
     for (a, b) in links:

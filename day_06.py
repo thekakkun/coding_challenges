@@ -18,7 +18,7 @@ def sim_fish(state, rule, days):
 
 
 with open('input/day_06.txt', 'r') as f:
-    input = [int(x) for x in f.read().strip().split(',')]
+    text = [int(x) for x in f.read().strip().split(',')]
     rule = {
         0: (8, 6),
         1: (0,),
@@ -30,5 +30,5 @@ with open('input/day_06.txt', 'r') as f:
         7: (6,),
         8: (7,),
     }
-    print(sim_fish(input, rule, 80))
-    print(sim_fish(input, rule, 256))
+    print(sim_fish(text, rule, 80))
+    print(sim_fish(text, rule, 256))

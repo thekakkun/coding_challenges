@@ -4,12 +4,12 @@
 import itertools
 
 
-def parse_input(input):
+def parse_input(text):
     return tuple(
         tuple(
             tuple(int(z) for z in y.split(',')
                   ) for y in x.split(' -> ')
-        ) for x in input.splitlines()
+        ) for x in text.splitlines()
     )
 
 
@@ -43,8 +43,8 @@ def find_vents_2(vents):
 
 
 with open('input/day_05.txt', 'r') as f:
-    input = f.read().strip()
-    vents = parse_input(input)
+    text = f.read().strip()
+    vents = parse_input(text)
 
     print(find_vents_1(vents))
     print(find_vents_2(vents))

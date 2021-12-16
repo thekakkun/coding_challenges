@@ -3,8 +3,8 @@
 import math
 
 
-def parse_bingo(input):
-    numbers, boards = input.strip().split('\n', maxsplit=1)
+def parse_bingo(text):
+    numbers, boards = text.strip().split('\n', maxsplit=1)
 
     numbers = (int(x) for x in numbers.split(','))
     boards = list(
@@ -57,6 +57,6 @@ def play_bingo_2(game):
 
 
 with open('input/day_04.txt', 'r') as f:
-    input = f.read().strip()
-    print(play_bingo_1(parse_bingo(input)))
-    print(play_bingo_2(parse_bingo(input)))
+    text = f.read().strip()
+    print(play_bingo_1(parse_bingo(text)))
+    print(play_bingo_2(parse_bingo(text)))

@@ -1,7 +1,7 @@
 # https://adventofcode.com/2021/day/14
 
-def parse_input(input):
-    (template, rules) = input.strip().split('\n\n')
+def parse_input(text):
+    (template, rules) = text.strip().split('\n\n')
 
     rules = {
         rule[:2]: rule[-1]

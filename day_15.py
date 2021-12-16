@@ -3,10 +3,10 @@
 import math
 
 
-def parse_input(input):
+def parse_input(text):
     return tuple(
         tuple(int(x) for x in row)
-        for row in input.strip().splitlines()
+        for row in text.strip().splitlines()
     )
 
 
@@ -39,8 +39,7 @@ def dijkstra(risk_map, start=(0, 0), goal=None):
     while Q:
         u = sorted(Q, key=dist.get)[0]
         if u == goal:
-            break
-
+            return dist
         Q.remove(u)
 
         neighbors = (
@@ -55,13 +54,12 @@ def dijkstra(risk_map, start=(0, 0), goal=None):
         for v in neighbors:
             if v not in Q:
                 continue
+
             v_r, v_c = v
             alt = dist.get(u, max_dist) + risk_map[v_r][v_c]
 
             if alt < dist.get(v, max_dist):
                 dist[v] = alt
-
-    return dist
 
 
 def manhattan(v_1, v_2):
@@ -85,7 +83,6 @@ def a_star(risk_map, cost, start=(0, 0), goal=None):
     dist[start] = 0
     heuristic[start] = cost(start, goal)
 
-    count = 0
     while Q:
         u = sorted(Q, key=heuristic.get)[0]
         if u == goal:

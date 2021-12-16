@@ -1,7 +1,7 @@
 # https://adventofcode.com/2021/day/8
 
 
-def parse_input(input):
+def parse_input(text):
     return (
         tuple(
             tuple(
@@ -9,7 +9,7 @@ def parse_input(input):
             )
             for y in x.split(' | ')
         )
-        for x in input.splitlines()
+        for x in text.splitlines()
     )
 
 
@@ -54,6 +54,6 @@ def count_sums(input):
 
 
 with open('input/day_08.txt', 'r') as f:
-    input = parse_input(f.read().strip())
-    print(count_unique(input))
-    print(count_sums(input))
+    text = parse_input(f.read().strip())
+    print(count_unique(text))
+    print(count_sums(text))

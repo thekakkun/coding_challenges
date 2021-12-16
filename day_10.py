@@ -59,6 +59,6 @@ def get_completion_score(input):
 
 
 with open('input/day_10.txt', 'r') as f:
-    input = f.read().strip().splitlines()
-    print(get_error_score(input))
-    print(get_completion_score(input))
+    text = f.read().strip().splitlines()
+    print(get_error_score(text))
+    print(get_completion_score(text))

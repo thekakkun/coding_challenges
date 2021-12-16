@@ -3,10 +3,10 @@
 import pprint
 
 
-def parse_input(input):
+def parse_input(text):
     octos = [
         [int(octo) for octo in row]
-        for row in input.splitlines()
+        for row in text.splitlines()
     ]
 
     c = len(octos[0])

@@ -1,7 +1,7 @@
 # https://adventofcode.com/2021/day/13
 
-def parse_input(input):
-    (dots, folds) = input.strip().split('\n\n')
+def parse_input(text):
+    (dots, folds) = text.strip().split('\n\n')
 
     dots = set(
         tuple(int(x) for x in line.split(','))
