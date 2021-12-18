@@ -1,5 +1,8 @@
 # https://adventofcode.com/2021/day/16
 
+from functools import reduce
+
+
 def parse_input(hex_string):
     hex_string = hex_string.strip()
     final_length = len(hex_string) * 4
@@ -33,9 +36,13 @@ def get_literal(packet):
             return literal_bin
 
 
-def read_packet(packet):
+def read_packet(packet, count=None):
     result = []
+
     while True:
+        if count and len(result) == count:
+            return result
+
         (v, t) = packet(3), packet(3)
         if v is None or t is None:
             return result
@@ -43,49 +50,56 @@ def read_packet(packet):
 
         if t == 4:
             literal = get_literal(packet)
-            result.append({'v': v, 't': t, 'lit': int(literal, 2)})
-
+            result.append({'v': v, 't': t, 'value': int(literal, 2)})
         else:
             l = packet(1)
-
-            if l is None:
-                return result
-
-            elif l == '0':
+            if l == '0':
                 bit_length = packet(15)
                 if bit_length is None:
                     return result
                 bit_length = int(bit_length, 2)
                 sub_packet_str = packet(bit_length)
                 result.append(
-                    {'v': v,
-                     't': t,
+                    {'v': v, 't': t,
                      'sub': read_packet(get_bits(sub_packet_str))
                      })
-
             elif l == '1':
-                sub_count = packet(11)
-                if sub_count is None:
-                    return result
-                sub_count = int(sub_count, 2)
-                sub_result = []
-                while len(sub_result) < sub_count:
-                    sub_result += read_packet(packet)
+                sub_count = int(packet(11), 2)
                 result.append({
-                    'v': v,
-                    't': t,
-                    'sub': sub_result
+                    'v': v, 't': t,
+                    'sub': read_packet(packet, sub_count)
                 })
 
 
 def sum_v(trans):
     total = 0
-    for e in trans:
-        total += e['v']
-        if 'sub' in e:
-            total += sum_v(e['sub'])
+    for packet in trans:
+        total += packet['v']
+        if 'sub' in packet:
+            total += sum_v(packet['sub'])
 
     return total
+
+
+def get_value(trans):
+    value_rules = {
+        0: lambda x: sum(x),
+        1: lambda x: reduce(lambda y, z: y * z, x, 1),
+        2: lambda x: min(x),
+        3: lambda x: max(x),
+        4: lambda x: x[0],
+        5: lambda x: 1 if (x[0] > x[1]) else 0,
+        6: lambda x: 1 if (x[0] < x[1]) else 0,
+        7: lambda x: 1 if (x[0] == x[1]) else 0
+    }
+
+    value = []
+    for packet in trans:
+        if 'value' in packet:
+            value.append(packet['value'])
+        else:
+            value.append(value_rules[packet['t']](get_value(packet['sub'])))
+    return value
 
 
 with open('input/day_16.txt', 'r') as f:
@@ -93,3 +107,4 @@ with open('input/day_16.txt', 'r') as f:
     packet = get_bits(packet_str)
     trans = read_packet(packet)
     print(sum_v(trans))
+    print(get_value(trans))
