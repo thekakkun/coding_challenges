@@ -14,7 +14,8 @@ def sweep_2(report, window_size=3):
     return sweep_1(windowed_report)
 
 
-with open('input/day_01.txt', 'r') as f:
-    report = [int(x) for x in f.read().splitlines()]
-    print(sweep_1(report))
-    print(sweep_2(report))
+if __name == '__main__':
+    with open('input/day_01.txt', 'r') as f:
+        report = [int(x) for x in f.read().splitlines()]
+        print(sweep_1(report))
+        print(sweep_2(report))

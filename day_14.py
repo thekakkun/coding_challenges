@@ -56,11 +56,12 @@ def count_elements(polymer, rules, steps=0):
     return {k: v//2 for k, v in el_count.items()}
 
 
-with open('input/day_14.txt', 'r') as f:
-    (template, rules) = parse_input(f.read())
+if __name == '__main__':
+    with open('input/day_14.txt', 'r') as f:
+        (template, rules) = parse_input(f.read())
 
-    el_count_1 = count_elements(template, rules, steps=10)
-    print(max(el_count_1.values()) - min(el_count_1.values()))
+        el_count_1 = count_elements(template, rules, steps=10)
+        print(max(el_count_1.values()) - min(el_count_1.values()))
 
-    el_count_2 = count_elements(template, rules, steps=40)
-    print(max(el_count_2.values()) - min(el_count_2.values()))
+        el_count_2 = count_elements(template, rules, steps=40)
+        print(max(el_count_2.values()) - min(el_count_2.values()))

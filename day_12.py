@@ -50,7 +50,8 @@ def get_paths(caves, successors, start='start', end='end'):
     return paths
 
 
-with open('input/day_12.txt', 'r') as f:
-    caves = parse_input(f.read())
-    print(len(get_paths(caves, successors_1)))
-    print(len(get_paths(caves, successors_2)))
+if __name == '__main__':
+    with open('input/day_12.txt', 'r') as f:
+        caves = parse_input(f.read())
+        print(len(get_paths(caves, successors_1)))
+        print(len(get_paths(caves, successors_2)))

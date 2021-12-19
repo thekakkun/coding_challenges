@@ -58,7 +58,8 @@ def get_completion_score(input):
     return sorted(scores)[(len(scores)-1)//2]
 
 
-with open('input/day_10.txt', 'r') as f:
-    text = f.read().strip().splitlines()
-    print(get_error_score(text))
-    print(get_completion_score(text))
+if __name == '__main__':
+    with open('input/day_10.txt', 'r') as f:
+        text = f.read().strip().splitlines()
+        print(get_error_score(text))
+        print(get_completion_score(text))

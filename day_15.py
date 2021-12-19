@@ -109,14 +109,15 @@ def a_star(risk_map, cost, start=(0, 0), goal=None):
                     Q.add(v)
 
 
-with open('input/day_15.txt', 'r') as f:
-    risk_map = parse_input(f.read())
+if __name == '__main__':
+    with open('input/day_15.txt', 'r') as f:
+        risk_map = parse_input(f.read())
 
-    rows, cols = len(risk_map), len(risk_map[0])
-    dist = a_star(risk_map, manhattan)
-    print(dist[(rows-1, cols-1)])
+        rows, cols = len(risk_map), len(risk_map[0])
+        dist = a_star(risk_map, manhattan)
+        print(dist[(rows-1, cols-1)])
 
-    full_risk_map = expand_map(risk_map)
-    rows, cols = len(full_risk_map), len(full_risk_map[0])
-    full_dist = a_star(full_risk_map, manhattan)
-    print(full_dist[(rows-1, cols-1)])
+        full_risk_map = expand_map(risk_map)
+        rows, cols = len(full_risk_map), len(full_risk_map[0])
+        full_dist = a_star(full_risk_map, manhattan)
+        print(full_dist[(rows-1, cols-1)])

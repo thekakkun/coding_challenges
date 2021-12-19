@@ -17,18 +17,19 @@ def sim_fish(state, rule, days):
     return sum(count.values())
 
 
-with open('input/day_06.txt', 'r') as f:
-    text = [int(x) for x in f.read().strip().split(',')]
-    rule = {
-        0: (8, 6),
-        1: (0,),
-        2: (1,),
-        3: (2,),
-        4: (3,),
-        5: (4,),
-        6: (5,),
-        7: (6,),
-        8: (7,),
-    }
-    print(sim_fish(text, rule, 80))
-    print(sim_fish(text, rule, 256))
+if __name == '__main__':
+    with open('input/day_06.txt', 'r') as f:
+        text = [int(x) for x in f.read().strip().split(',')]
+        rule = {
+            0: (8, 6),
+            1: (0,),
+            2: (1,),
+            3: (2,),
+            4: (3,),
+            5: (4,),
+            6: (5,),
+            7: (6,),
+            8: (7,),
+        }
+        print(sim_fish(text, rule, 80))
+        print(sim_fish(text, rule, 256))

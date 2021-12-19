@@ -56,7 +56,8 @@ def play_bingo_2(game):
                         remainder -= 1
 
 
-with open('input/day_04.txt', 'r') as f:
-    text = f.read().strip()
-    print(play_bingo_1(parse_bingo(text)))
-    print(play_bingo_2(parse_bingo(text)))
+if __name == '__main__':
+    with open('input/day_04.txt', 'r') as f:
+        text = f.read().strip()
+        print(play_bingo_1(parse_bingo(text)))
+        print(play_bingo_2(parse_bingo(text)))

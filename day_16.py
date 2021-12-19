@@ -102,9 +102,10 @@ def get_value(trans):
     return value
 
 
-with open('input/day_16.txt', 'r') as f:
-    packet_str = parse_input(f.read())
-    packet = get_bits(packet_str)
-    trans = read_packet(packet)
-    print(sum_v(trans))
-    print(get_value(trans))
+if __name == '__main__':
+    with open('input/day_16.txt', 'r') as f:
+        packet_str = parse_input(f.read())
+        packet = get_bits(packet_str)
+        trans = read_packet(packet)
+        print(sum_v(trans))
+        print(get_value(trans))

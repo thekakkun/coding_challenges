@@ -38,7 +38,6 @@ def get_basin(heightmap, low_point, lower_than):
     visited = set()
 
     while frontier:
-        print(visited)
         (p_r, p_c) = frontier.pop()
         if (p_r, p_c) in visited:
             continue
@@ -88,11 +87,12 @@ def find_basins(heightmap):
     )
 
 
-with open('input/day_09.txt', 'r') as f:
-    heightmap = tuple(
-        tuple(int(y) for y in x)
-        for x in f.read().strip().splitlines()
-    )
+if __name == '__main__':
+    with open('input/day_09.txt', 'r') as f:
+        heightmap = tuple(
+            tuple(int(y) for y in x)
+            for x in f.read().strip().splitlines()
+        )
 
-    print(get_risk_level(heightmap))
-    print(find_basins(heightmap))
+        print(get_risk_level(heightmap))
+        print(find_basins(heightmap))

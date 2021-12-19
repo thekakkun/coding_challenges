@@ -42,9 +42,10 @@ def find_vents_2(vents):
     return sum(1 for _, v in vent_map.items() if 2 <= v)
 
 
-with open('input/day_05.txt', 'r') as f:
-    text = f.read().strip()
-    vents = parse_input(text)
+if __name == '__main__':
+    with open('input/day_05.txt', 'r') as f:
+        text = f.read().strip()
+        vents = parse_input(text)
 
-    print(find_vents_1(vents))
-    print(find_vents_2(vents))
+        print(find_vents_1(vents))
+        print(find_vents_2(vents))
