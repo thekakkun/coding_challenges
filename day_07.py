@@ -32,7 +32,7 @@ def align_crabs(state, dist_f):
             return guess
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_07.txt', 'r') as f:
         state = tuple(int(x) for x in f.read().split(','))
         print(align_crabs(state, dist_1))

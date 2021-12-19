@@ -17,7 +17,7 @@ def sim_fish(state, rule, days):
     return sum(count.values())
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_06.txt', 'r') as f:
         text = [int(x) for x in f.read().strip().split(',')]
         rule = {

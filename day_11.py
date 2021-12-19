@@ -86,7 +86,7 @@ def find_simul(octos):
     return steps
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_11.txt', 'r') as f:
         octos = parse_input(f.read().strip())
         print(count_flashes(octos, 100))

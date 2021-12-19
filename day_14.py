@@ -56,7 +56,7 @@ def count_elements(polymer, rules, steps=0):
     return {k: v//2 for k, v in el_count.items()}
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_14.txt', 'r') as f:
         (template, rules) = parse_input(f.read())
 

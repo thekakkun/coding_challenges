@@ -44,7 +44,7 @@ def navigate_2(commands):
     return h * d
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_02.txt') as f:
         commands = f.read().splitlines()
         print(navigate_1(commands))

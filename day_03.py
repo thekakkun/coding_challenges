@@ -48,7 +48,7 @@ def diag_2(report):
     return int(o, 2) * int(co2, 2)
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_03.txt', 'r') as f:
         report = f.read().splitlines()
         print(diag_1(report))

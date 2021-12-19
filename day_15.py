@@ -109,7 +109,7 @@ def a_star(risk_map, cost, start=(0, 0), goal=None):
                     Q.add(v)
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_15.txt', 'r') as f:
         risk_map = parse_input(f.read())
 

@@ -53,7 +53,7 @@ def count_sums(input):
     return sum(decode(x) for x in input)
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_08.txt', 'r') as f:
         text = parse_input(f.read().strip())
         print(count_unique(text))

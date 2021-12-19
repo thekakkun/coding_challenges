@@ -52,7 +52,7 @@ def print_code(dots):
         print(line)
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_13.txt', 'r') as f:
         (dots, folds) = parse_input(f.read())
         print(len(make_fold(dots, folds[0])))

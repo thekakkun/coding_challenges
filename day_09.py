@@ -87,7 +87,7 @@ def find_basins(heightmap):
     )
 
 
-if __name == '__main__':
+if __name__ == '__main__':
     with open('input/day_09.txt', 'r') as f:
         heightmap = tuple(
             tuple(int(y) for y in x)
