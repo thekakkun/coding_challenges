@@ -1,6 +1,5 @@
 # https://adventofcode.com/2021/day/8
 
-
 def parse_input(text):
     return (
         tuple(

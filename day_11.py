@@ -1,8 +1,5 @@
 # https://adventofcode.com/2021/day/11
 
-import pprint
-
-
 def parse_input(text):
     octos = [
         [int(octo) for octo in row]

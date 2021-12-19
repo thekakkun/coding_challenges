@@ -1,8 +1,5 @@
 # https://adventofcode.com/2021/day/3
 
-import unittest
-
-
 def get_gamma(report):
     threshold = len(report) / 2
     data_len = len(report[0])

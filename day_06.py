@@ -1,8 +1,5 @@
 # https://adventofcode.com/2021/day/6
 
-import functools
-
-
 def sim_fish(state, rule, days):
     count = {x: state.count(x) for x in set(state)}
 

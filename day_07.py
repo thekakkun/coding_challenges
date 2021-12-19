@@ -1,6 +1,5 @@
 # https://adventofcode.com/2021/day/7
 
-
 def dist_1(x, target): return abs(x - target)
 
 
