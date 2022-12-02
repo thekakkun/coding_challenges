@@ -1,4 +1,4 @@
-use std::{fs, process};
+use std::{fs, process, time::Instant};
 
 mod day_01;
 
@@ -10,6 +10,21 @@ fn main() {
 
     let input = day_01::parse_input(&f);
 
-    println!("Part 1: {}", day_01::part_1(input));
-    println!("Part 2: {}", day_01::part_2(input, 3));
+    let start = Instant::now();
+
+    let part_1_result = day_01::part_1(input);
+    let part_1_done = Instant::now();
+    println!(
+        "Part 1: {} in {:?}",
+        part_1_result,
+        part_1_done.duration_since(start)
+    );
+
+    let part_2_result = day_01::part_2(input, 3);
+    let part_2_done = Instant::now();
+    println!(
+        "Part 1: {} in {:?}",
+        part_2_result,
+        part_2_done.duration_since(start)
+    );
 }
