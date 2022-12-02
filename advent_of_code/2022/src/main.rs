@@ -13,18 +13,18 @@ fn main() {
     let start = Instant::now();
 
     let part_1_result = day_01::part_1(input);
-    let part_1_done = Instant::now();
+    let split = Instant::now();
     println!(
         "Part 1: {} in {:?}",
         part_1_result,
-        part_1_done.duration_since(start)
+        split.duration_since(start)
     );
 
     let part_2_result = day_01::part_2(input, 3);
-    let part_2_done = Instant::now();
+    let done = Instant::now();
     println!(
         "Part 1: {} in {:?}",
         part_2_result,
-        part_2_done.duration_since(start)
+        done.duration_since(split)
     );
 }
