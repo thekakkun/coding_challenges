@@ -1,9 +1,12 @@
+#![allow(dead_code)]
+
 pub fn parse_input(f: &str) -> Vec<Vec<&str>> {
     f.lines()
         .map(|line| line.split_whitespace().collect())
         .collect()
 }
 
+#[derive(Clone)]
 enum Hand {
     Rock,
     Paper,
@@ -29,34 +32,26 @@ impl Hand {
     }
 
     fn against(&self, opponent: &Hand) -> GameResult {
-        match [opponent, self] {
-            [Hand::Rock, Hand::Paper] => GameResult::Win,
-            [Hand::Paper, Hand::Rock] => GameResult::Lose,
-            [Hand::Paper, Hand::Scissors] => GameResult::Win,
-            [Hand::Scissors, Hand::Paper] => GameResult::Lose,
-            [Hand::Scissors, Hand::Rock] => GameResult::Win,
-            [Hand::Rock, Hand::Scissors] => GameResult::Lose,
+        match (opponent, self) {
+            (Hand::Rock, Hand::Paper) => GameResult::Win,
+            (Hand::Paper, Hand::Rock) => GameResult::Lose,
+            (Hand::Paper, Hand::Scissors) => GameResult::Win,
+            (Hand::Scissors, Hand::Paper) => GameResult::Lose,
+            (Hand::Scissors, Hand::Rock) => GameResult::Win,
+            (Hand::Rock, Hand::Scissors) => GameResult::Lose,
             _ => GameResult::Draw,
         }
     }
 
     fn want(&self, result: &GameResult) -> Hand {
-        match self {
-            Hand::Rock => match result {
-                GameResult::Win => Hand::Paper,
-                GameResult::Draw => Hand::Rock,
-                GameResult::Lose => Hand::Scissors,
-            },
-            Hand::Paper => match result {
-                GameResult::Win => Hand::Scissors,
-                GameResult::Draw => Hand::Paper,
-                GameResult::Lose => Hand::Rock,
-            },
-            Hand::Scissors => match result {
-                GameResult::Win => Hand::Rock,
-                GameResult::Draw => Hand::Scissors,
-                GameResult::Lose => Hand::Paper,
-            },
+        match (self, result) {
+            (Hand::Rock, GameResult::Win) => Hand::Paper,
+            (Hand::Rock, GameResult::Lose) => Hand::Scissors,
+            (Hand::Paper, GameResult::Win) => Hand::Scissors,
+            (Hand::Paper, GameResult::Lose) => Hand::Rock,
+            (Hand::Scissors, GameResult::Win) => Hand::Rock,
+            (Hand::Scissors, GameResult::Lose) => Hand::Paper,
+            _ => self.clone(),
         }
     }
 }
