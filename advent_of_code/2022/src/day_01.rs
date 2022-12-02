@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::cmp;
 
 pub fn parse_input(f: &str) -> &str {
