@@ -8,8 +8,8 @@ fn main() {
         process::exit(1)
     });
 
-    let input = day_01::parse_input(f);
+    let input = day_01::parse_input(&f);
 
-    println!("Part 1: {}", day_01::part_1(&input));
-    println!("Part 2: {}", day_01::part_2(&input));
+    println!("Part 1: {}", day_01::part_1(input));
+    println!("Part 2: {}", day_01::part_2(input, 3));
 }
