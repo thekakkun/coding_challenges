@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::collections::{HashMap, HashSet};
 
 pub fn parse_input(f: &str) -> Vec<[HashMap<char, i32>; 2]> {
@@ -36,17 +38,46 @@ pub fn part_1(input: &[[HashMap<char, i32>; 2]]) -> i32 {
                 .next()
                 .unwrap();
 
-            match **shared_content {
-                'a'..='z' => **shared_content as i32 - 96,
-                'A'..='Z' => **shared_content as i32 - 38,
-                _ => unreachable!("Should never happen."),
-            }
+            char2priority(**shared_content)
         })
         .sum()
 }
 
 pub fn part_2(input: &[[HashMap<char, i32>; 2]]) -> i32 {
-    unimplemented!();
+    let mut total = 0;
+
+    let groups = input.chunks(3);
+
+    for group in groups {
+        let unique_items = group
+            .iter()
+            .map(|rucks| {
+                let items: HashSet<_> = (rucks[0].keys().chain(rucks[1].keys())).copied().collect();
+                items
+            })
+            .reduce(|acc, item| {
+                let unique_item: HashSet<_> = acc.intersection(&item).copied().collect();
+                unique_item
+            })
+            .unwrap();
+
+        let unique_item = unique_items
+            .iter()
+            .next()
+            .unwrap();
+
+        total += char2priority(*unique_item);
+    }
+
+    total
+}
+
+fn char2priority(char: char) -> i32 {
+    match char {
+        'a'..='z' => (char as i32) - 96,
+        'A'..='Z' => (char as i32) - 38,
+        _ => unreachable!("Should never happen."),
+    }
 }
 
 #[cfg(test)]
@@ -63,8 +94,8 @@ CrZsJsPPZsGzwwsLwLmpwMDw
 ";
 
     #[test]
-    fn foo() {
-        println!("{:?}", (b'A'..=b'Z'));
+    fn test() {
+        println!("{:?}", 'a'..='Z');
     }
 
     #[test]
@@ -73,9 +104,9 @@ CrZsJsPPZsGzwwsLwLmpwMDw
         assert_eq!(part_1(&input), 157);
     }
 
-    // #[test]
-    // fn test_part_2() {
-    //     let input = parse_input(EXAMPLE_FILE);
-    //     assert_eq!(part_2(&input), 12);
-    // }
+    #[test]
+    fn test_part_2() {
+        let input = parse_input(EXAMPLE_FILE);
+        assert_eq!(part_2(&input), 70);
+    }
 }
