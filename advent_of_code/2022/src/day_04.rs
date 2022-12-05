@@ -28,7 +28,14 @@ pub fn part_1(input: &[((i32, i32), (i32, i32))]) -> i32 {
 }
 
 pub fn part_2(input: &[((i32, i32), (i32, i32))]) -> i32 {
-    todo!()
+    input
+        .iter()
+        .copied()
+        .filter(|((first_start, first_end), (second_start, second_end))| {
+            (first_start <= second_start && second_start <= first_end)
+                || (second_start <= first_start && first_start <= second_end)
+        })
+        .count() as i32
 }
 
 #[cfg(test)]
@@ -50,9 +57,9 @@ mod tests {
         assert_eq!(part_1(&input), 2);
     }
 
-    // #[test]
-    // fn test_part_2() {
-    //     let input = parse_file(EXAMPLE_FILE);
-    //     assert_eq!(part_2(&input), 70);
-    // }
+    #[test]
+    fn test_part_2() {
+        let input = parse_file(EXAMPLE_FILE);
+        assert_eq!(part_2(&input), 4);
+    }
 }

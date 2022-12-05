@@ -23,11 +23,11 @@ fn main() {
         split.duration_since(start)
     );
 
-    // let part_2_result = day_04::part_2(&input);
-    // let done = Instant::now();
-    // println!(
-    //     "Part 2: {} in {:?}",
-    //     part_2_result,
-    //     done.duration_since(split)
-    // );
+    let part_2_result = day_04::part_2(&input);
+    let done = Instant::now();
+    println!(
+        "Part 2: {} in {:?}",
+        part_2_result,
+        done.duration_since(split)
+    );
 }
