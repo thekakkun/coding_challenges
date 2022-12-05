@@ -2,7 +2,9 @@
 
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_file(f: &str) -> Vec<((i32, i32), (i32, i32))> {
+type Sections = Vec<((i32, i32), (i32, i32))>;
+
+pub fn parse_file(f: &str) -> Sections {
     f.lines()
         .map(|pair| {
             let (first, second) = pair.split_once(',').unwrap();
@@ -16,7 +18,7 @@ fn parse_range(range: &str) -> (i32, i32) {
     (start.parse().unwrap(), end.parse().unwrap())
 }
 
-pub fn part_1(input: &[((i32, i32), (i32, i32))]) -> i32 {
+pub fn part_1(input: &Sections) -> i32 {
     input
         .iter()
         .copied()
@@ -27,7 +29,7 @@ pub fn part_1(input: &[((i32, i32), (i32, i32))]) -> i32 {
         .count() as i32
 }
 
-pub fn part_2(input: &[((i32, i32), (i32, i32))]) -> i32 {
+pub fn part_2(input: &Sections) -> i32 {
     input
         .iter()
         .copied()
