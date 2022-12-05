@@ -1,6 +1,13 @@
 #![allow(unused)]
 
+use std::fmt::format;
+
 use regex::Regex;
+
+enum CrateMover {
+    Model9000,
+    Model9001,
+}
 
 #[derive(Clone, Debug)]
 pub struct SupplyStacks {
@@ -9,13 +16,27 @@ pub struct SupplyStacks {
 }
 
 impl SupplyStacks {
-    fn do_procedures(&mut self) {
-        for (count, from, to) in &self.procedures {
-            for i in 0..*count {
-                let target = self.stacks[*from - 1].pop().unwrap();
-                self.stacks[*to - 1].push(target);
+    fn simulate_procedures(&self, cm: CrateMover) -> SupplyStacks {
+        let mut sim_result = self.clone();
+
+        for (count, from, to) in &sim_result.procedures {
+            match cm {
+                CrateMover::Model9000 => {
+                    for i in 0..*count {
+                        let target = sim_result.stacks[from - 1].pop().unwrap();
+                        sim_result.stacks[to - 1].push(target);
+                    }
+                }
+                CrateMover::Model9001 => {
+                    let leave_in_from = sim_result.stacks[from - 1].len() - count;
+                    let mut crates_to_move =
+                        sim_result.stacks[from - 1].drain(leave_in_from..).collect();
+                    sim_result.stacks[to - 1].append(&mut crates_to_move);
+                }
             }
         }
+
+        sim_result
     }
 
     fn get_tops(&self) -> String {
@@ -29,7 +50,7 @@ impl SupplyStacks {
 }
 
 pub fn parse_file(f: &str) -> SupplyStacks {
-    let mut stacks: Vec<Vec<char>> = Vec::new();
+    let mut stacks: Vec<Vec<_>> = Vec::new();
     let mut procedures = Vec::new();
 
     let (crate_f, procedures_f) = f.split_once("\n\n").unwrap();
@@ -62,14 +83,15 @@ pub fn parse_file(f: &str) -> SupplyStacks {
     SupplyStacks { stacks, procedures }
 }
 
-pub fn part_1(mut input: SupplyStacks) -> String {
-    input.do_procedures();
-    input.get_tops()
+pub fn part_1(input: &SupplyStacks) -> String {
+    let result = input.simulate_procedures(CrateMover::Model9000);
+    result.get_tops()
 }
 
-// pub fn part_2(input: SupplyStacks) {
-//     todo!()
-// }
+pub fn part_2(input: &SupplyStacks) -> String {
+    let result = input.simulate_procedures(CrateMover::Model9001);
+    result.get_tops()
+}
 
 #[cfg(test)]
 mod tests {
@@ -102,12 +124,12 @@ move 1 from 1 to 2
     #[test]
     fn test_part_1() {
         let input = parse_file(EXAMPLE_FILE);
-        assert_eq!(part_1(input), "CMZ");
+        assert_eq!("CMZ", part_1(&input));
     }
 
-    // #[test]
-    // fn test_part_2() {
-    //     let input = parse_file(EXAMPLE_FILE);
-    //     assert_eq!(part_2(&input), 4);
-    // }
+    #[test]
+    fn test_part_2() {
+        let input = parse_file(EXAMPLE_FILE);
+        assert_eq!("MCD", part_2(&input));
+    }
 }
