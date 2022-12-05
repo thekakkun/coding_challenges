@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+#![allow(unused)]
 
 pub fn parse_file(f: &str) -> Vec<Vec<&str>> {
     f.lines()

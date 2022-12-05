@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-use std::collections::{HashMap, HashSet};
-
 type Sections = Vec<((i32, i32), (i32, i32))>;
 
 pub fn parse_file(f: &str) -> Sections {
@@ -18,7 +16,7 @@ fn parse_range(range: &str) -> (i32, i32) {
     (start.parse().unwrap(), end.parse().unwrap())
 }
 
-pub fn part_1(input: &Sections) -> i32 {
+pub fn part_1(input: &Sections) -> usize {
     input
         .iter()
         .copied()
@@ -26,10 +24,10 @@ pub fn part_1(input: &Sections) -> i32 {
             (first_start <= second_start && second_end <= first_end)
                 || (second_start <= first_start && first_end <= second_end)
         })
-        .count() as i32
+        .count()
 }
 
-pub fn part_2(input: &Sections) -> i32 {
+pub fn part_2(input: &Sections) -> usize {
     input
         .iter()
         .copied()
@@ -37,7 +35,7 @@ pub fn part_2(input: &Sections) -> i32 {
             (first_start <= second_start && second_start <= first_end)
                 || (second_start <= first_start && first_start <= second_end)
         })
-        .count() as i32
+        .count()
 }
 
 #[cfg(test)]
