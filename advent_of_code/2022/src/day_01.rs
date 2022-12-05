@@ -2,7 +2,7 @@
 
 use std::cmp;
 
-pub fn parse_input(f: &str) -> &str {
+pub fn parse_file(f: &str) -> &str {
     f
 }
 
@@ -70,13 +70,13 @@ mod tests {
 
     #[test]
     fn part_1_example() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_1(input), 24000);
     }
 
     #[test]
     fn part_2_example() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_2(input, 3), 45000);
     }
 }

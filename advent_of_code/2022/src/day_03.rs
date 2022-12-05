@@ -2,7 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_input(f: &str) -> Vec<[HashMap<char, i32>; 2]> {
+pub fn parse_file(f: &str) -> Vec<[HashMap<char, i32>; 2]> {
     f.lines()
         .map(|line| {
             let (mut ruck_0, mut ruck_1) = (HashMap::new(), HashMap::new());
@@ -100,13 +100,13 @@ CrZsJsPPZsGzwwsLwLmpwMDw
 
     #[test]
     fn test_part_1() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_1(&input), 157);
     }
 
     #[test]
     fn test_part_2() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_2(&input), 70);
     }
 }

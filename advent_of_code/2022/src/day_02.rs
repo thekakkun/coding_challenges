@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-pub fn parse_input(f: &str) -> Vec<Vec<&str>> {
+pub fn parse_file(f: &str) -> Vec<Vec<&str>> {
     f.lines()
         .map(|line| line.split_whitespace().collect())
         .collect()
@@ -115,22 +115,22 @@ C Z
 ";
 
     #[test]
-    fn test_parse_input() {
+    fn test_parse_file() {
         assert_eq!(
-            parse_input(EXAMPLE_FILE),
+            parse_file(EXAMPLE_FILE),
             [["A", "Y"], ["B", "X"], ["C", "Z"]]
         )
     }
 
     #[test]
     fn test_part_1() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_1(&input), 15);
     }
 
     #[test]
     fn test_part_2() {
-        let input = parse_input(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(part_2(&input), 12);
     }
 }
