@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-use std::fmt::format;
-
 use regex::Regex;
 
 enum CrateMover {
@@ -22,7 +20,7 @@ impl SupplyStacks {
         for (count, from, to) in &sim_result.procedures {
             match cm {
                 CrateMover::Model9000 => {
-                    for i in 0..*count {
+                    for _ in 0..*count {
                         let target = sim_result.stacks[from - 1].pop().unwrap();
                         sim_result.stacks[to - 1].push(target);
                     }

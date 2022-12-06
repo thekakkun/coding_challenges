@@ -97,7 +97,6 @@ pub fn part_2(input: &[Vec<&str>]) -> i32 {
         .iter()
         .map(|game| {
             let opponent_hand = Hand::from_str(game[0]).unwrap();
-
             let your_result = GameResult::from_str(game[1]).unwrap();
             your_result.value() + opponent_hand.want(&your_result).value()
         })
