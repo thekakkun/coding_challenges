@@ -2,32 +2,32 @@ pub fn parse_file(f: &str) -> &str {
     f
 }
 
-fn find_marker(input: &str, seq_size: usize) -> usize {
+fn find_marker(input: &str, seq_len: usize) -> usize {
     let mut seq_start = 0;
-    let mut c_loc = 1;
+    let mut iter = input.chars().enumerate();
 
-    loop {
-        let seq = &input[seq_start..c_loc];
-        let next_char = &input.chars().nth(c_loc).unwrap();
+    while let Some((seq_end, c)) = iter.next() {
+        let seq = &input[seq_start..seq_end];
 
-        match seq.find(*next_char) {
-            // if next_char is found in seq, skip ahead so seq doesn't contain duplicate chars
+        match seq.find(c) {
+            // If c is found in seq, skip ahead so seq will no longer contain duplicate chars
             Some(i) => {
                 seq_start += i + 1;
-                c_loc = seq_start + 1;
+                iter.nth(i);
+
                 continue;
             }
-            // make sure seq.len() is at least seq_size
             None => {
-                if seq.len() + 1 < seq_size {
-                    c_loc += 1;
+                if seq.len() + 1 < seq_len {
                     continue;
+                } else {
+                    return seq_end + 1;
                 }
             }
         }
-
-        return c_loc + 1;
     }
+
+    0
 }
 
 pub fn part_1(input: &str) -> usize {
