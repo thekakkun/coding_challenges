@@ -17,7 +17,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let part_1_result = day_06::part_1(input, None);
+    let part_1_result = day_06::part_1(input);
     let split = Instant::now();
     println!(
         "Part 1: {} in {:?}",
