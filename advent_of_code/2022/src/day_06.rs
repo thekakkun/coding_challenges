@@ -2,40 +2,33 @@ pub fn parse_file(f: &str) -> &str {
     f
 }
 
-fn find_marker(input: &str, seq_len: usize) -> usize {
+fn find_marker(input: &str, seq_len: usize) -> Result<usize, &'static str> {
     let mut seq_start = 0;
     let mut iter = input.chars().enumerate();
+    iter.next();
 
-    while let Some((seq_end, c)) = iter.next() {
-        let seq = &input[seq_start..seq_end];
+    for (seq_end, c) in iter {
+        let mut seq = &input[seq_start..seq_end];
 
-        match seq.find(c) {
-            // If c is found in seq, skip ahead so seq will no longer contain duplicate chars
-            Some(i) => {
-                seq_start += i + 1;
-                iter.nth(i);
+        while let Some(i) = seq.find(c) {
+            seq_start += i + 1;
+            seq = &input[seq_start..seq_end];
+        }
 
-                continue;
-            }
-            None => {
-                if seq.len() + 1 < seq_len {
-                    continue;
-                } else {
-                    return seq_end + 1;
-                }
-            }
+        if seq.len() + 1 == seq_len {
+            return Ok(seq_end + 1);
         }
     }
 
-    0
+    Err("marker not found")
 }
 
 pub fn part_1(input: &str) -> usize {
-    find_marker(input, 4)
+    find_marker(input, 4).unwrap()
 }
 
 pub fn part_2(input: &str) -> usize {
-    find_marker(input, 14)
+    find_marker(input, 14).unwrap()
 }
 
 #[cfg(test)]
