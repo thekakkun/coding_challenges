@@ -1,109 +1,94 @@
-#![allow(unused)]
+use std::cell::RefCell;
+use std::rc::{Rc, Weak};
 
-use std::ops::IndexMut;
-
-#[derive(Clone, Debug)]
-pub struct File {
+#[derive(Debug)]
+pub struct FileSystemItem {
     name: String,
-    size: i32,
+    size: RefCell<i32>,
+    parent: RefCell<Weak<FileSystemItem>>,
+    children: RefCell<Option<Vec<Rc<FileSystemItem>>>>,
 }
 
-impl File {
-    pub fn new(name: String, size: i32) -> Self {
-        Self { name, size }
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct Dir {
-    name: String,
-    size: i32,
-    children: Vec<FileSystemItem>,
-}
-
-impl Dir {
-    pub fn new(name: String) -> Self {
-        Self {
-            name,
-            size: 0,
-            children: Vec::new(),
-        }
-    }
-
-    fn add_child(&mut self, child: FileSystemItem) {
-        self.size += child.get_size();
-        self.children.push(child);
-    }
-}
-
-#[derive(Clone, Debug)]
-pub enum FileSystemItem {
-    Dir(Dir),
-    File(File),
-}
-
-impl FileSystemItem {
-    fn get_size(&self) -> i32 {
-        match self {
-            FileSystemItem::Dir(item) => item.size,
-            FileSystemItem::File(item) => item.size,
-        }
-    }
-}
-
-pub fn parse_file(f: &str) -> Dir {
-    let mut root = Dir {
-        size: 0,
+pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
+    let root = Rc::new(FileSystemItem {
         name: String::from("root"),
-        children: Vec::new(),
-    };
-    let mut dirs = vec![&mut root];
-    let mut lines = f.lines();
+        size: RefCell::new(0),
+        parent: RefCell::new(Weak::new()),
+        children: RefCell::new(Some(vec![])),
+    });
+    let mut current = root.clone();
 
-    for line in lines {
+    f.lines().for_each(|line| {
+        println!("{line}");
         match line.split_once(' ') {
             Some(("$", command)) => match command.split_once(' ') {
                 Some(("cd", dir)) => match dir {
                     "/" => {
-                        println!("dirs: {:?}", dirs);
-                        dirs.drain(1..);
-                        println!("went to root: {:?}", dirs);
+                        current = root.clone();
+                        println!("Current = {}", current.name);
                     }
                     ".." => {
-                        println!("dirs: {:?}", dirs);
-                        dirs.pop();
-                        println!("go up: {:?}", dirs);
+                        let parent_folder = current.parent.borrow().upgrade().unwrap();
+                        current = parent_folder;
+                        println!("Current = {}", current.name);
                     }
                     _ => {
-                        let new_dir = FileSystemItem::Dir(Dir::new(dir.to_string()));
-                        let current_dir = dirs[dirs.len()];
-                        current_dir.add_child(new_dir);
-                        dirs.push(current_dir);
+                        // create new_dir
+                        let new_dir = Rc::new(FileSystemItem {
+                            name: String::from(dir),
+                            size: RefCell::new(0),
+                            parent: RefCell::new(Rc::downgrade(&current)), // parent of new_dir is current
+                            children: RefCell::new(Some(vec![])),
+                        });
+
+                        // Add new_dir as child to current
+                        if let Some(ref mut siblings) = *current.children.borrow_mut() {
+                            siblings.push(new_dir.clone());
+                        }
+
+                        // move into new_dir
+                        current = new_dir;
                     }
                 },
+                Some(("ls", _)) => (),
                 Some((command, _)) => panic!("unknown command: {command}"),
                 None => (),
             },
-            Some(("dir", name)) => (),
+            Some(("dir", _)) => (),
             Some((size, name)) => {
-                let new_file =
-                    FileSystemItem::File(File::new(name.to_string(), size.parse().unwrap()));
+                let new_file = Rc::new(FileSystemItem {
+                    name: String::from(name),
+                    size: RefCell::new(size.parse().unwrap()),
+                    parent: RefCell::new(Rc::downgrade(&current)), // parent of new_file is current
+                    children: RefCell::new(None),                  // files have no children
+                });
 
-                let current_dir = dirs[dirs.len()];
-                current_dir.add_child(new_file);
+                let mut ancestor = new_file.clone();
+
+                while let Some(older_ancestor) = ancestor.clone().parent.borrow().upgrade() {
+                    older_ancestor
+                        .size
+                        .replace_with(|&mut s| s + size.parse::<i32>().unwrap());
+
+                    ancestor = older_ancestor;
+                }
+
+                if let Some(ref mut siblings) = *current.children.borrow_mut() {
+                    siblings.push(new_file);
+                }
             }
             None => (),
         }
-    }
-
-    println!("{:?}", root);
+    });
 
     root
 }
 
-// pub fn part_1(input: &str) -> usize {
-//     find_marker(input, 4).unwrap()
-// }
+pub fn part_1(input: Rc<FileSystemItem>) -> i32 {
+    let count = 0;
+
+    count
+}
 
 // pub fn part_2(input: &str) -> usize {
 //     find_marker(input, 14).unwrap()
@@ -141,7 +126,8 @@ $ ls
 
     #[test]
     fn parse_example_file() {
-        parse_file(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
+        assert_eq!(48381165, *input.size.borrow());
     }
 
     // #[test]
