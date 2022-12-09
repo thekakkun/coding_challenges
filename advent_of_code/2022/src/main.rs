@@ -14,16 +14,20 @@ fn main() {
         process::exit(1)
     });
 
-    let input = day_07::parse_file(&f);
-
     let start = Instant::now();
+    let input = day_07::parse_file(&f);
+    let parse_file_split = Instant::now();
+    println!(
+        "Parsed input file in {:?}",
+        parse_file_split.duration_since(start)
+    );
 
     let part_1_result = day_07::part_1(input.clone(), 100000);
-    let split = Instant::now();
+    let part_1_split = Instant::now();
     println!(
         "Part 1: {} in {:?}",
         part_1_result,
-        split.duration_since(start)
+        part_1_split.duration_since(parse_file_split)
     );
 
     let part_2_result = day_07::part_2(input, 70000000, 30000000);
@@ -31,6 +35,6 @@ fn main() {
     println!(
         "Part 2: {} in {:?}",
         part_2_result,
-        done.duration_since(split)
+        done.duration_since(part_1_split)
     );
 }
