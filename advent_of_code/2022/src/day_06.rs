@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub fn parse_file(f: &str) -> &str {
     f
 }

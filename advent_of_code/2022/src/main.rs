@@ -18,7 +18,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let part_1_result = day_07::part_1(input, 100000);
+    let part_1_result = day_07::part_1(input.clone(), 100000);
     let split = Instant::now();
     println!(
         "Part 1: {} in {:?}",
@@ -26,11 +26,11 @@ fn main() {
         split.duration_since(start)
     );
 
-    // let part_2_result = day_07::part_2(input);
-    // let done = Instant::now();
-    // println!(
-    //     "Part 2: {} in {:?}",
-    //     part_2_result,
-    //     done.duration_since(split)
-    // );
+    let part_2_result = day_07::part_2(input, 70000000, 30000000);
+    let done = Instant::now();
+    println!(
+        "Part 2: {} in {:?}",
+        part_2_result,
+        done.duration_since(split)
+    );
 }

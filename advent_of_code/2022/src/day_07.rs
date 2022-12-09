@@ -1,8 +1,8 @@
 use std::cell::RefCell;
-use std::ops::Deref;
+use std::cmp;
 use std::rc::{Rc, Weak};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum ItemType {
     Dir(Vec<Rc<FileSystemItem>>),
     File,
@@ -102,16 +102,33 @@ pub fn part_1(input: Rc<FileSystemItem>, max_size: i32) -> i32 {
             total_size += contents
                 .iter()
                 .cloned()
-                .filter(|content| match content.item_type.borrow().deref() {
-                    ItemType::Dir(_) => true,
-                    ItemType::File => false,
-                })
                 .map(|child| part_1(child, max_size))
                 .sum::<i32>();
 
             total_size
         }
     }
+}
+
+pub fn part_2(input: Rc<FileSystemItem>, total_space: i32, required_space: i32) -> i32 {
+    let unused_space = total_space - *input.size.borrow();
+    let mut smallest_dir = total_space;
+
+    if let ItemType::Dir(mut deletion_candidates) = (*input.item_type.borrow()).clone() {
+        while let Some(candidate) = deletion_candidates.pop() {
+            if let ItemType::Dir(contents) = &*candidate.item_type.borrow() {
+                if required_space < unused_space + *candidate.size.borrow() {
+                    smallest_dir = cmp::min(smallest_dir, *candidate.size.borrow());
+                }
+
+                deletion_candidates.extend(contents.clone());
+            }
+        }
+    } else {
+        return *input.size.borrow();
+    };
+
+    smallest_dir
 }
 
 #[cfg(test)]
@@ -156,9 +173,9 @@ $ ls
         assert_eq!(95437, part_1(input, 100000));
     }
 
-    // #[test]
-    // fn example_part_2() {
-    //     let input = parse_file(EXAMPLE_FILE);
-    //     assert_eq!("MCD", part_2(&input));
-    // }
+    #[test]
+    fn example_part_2() {
+        let input = parse_file(EXAMPLE_FILE);
+        assert_eq!(24933642, part_2(input, 70000000, 30000000));
+    }
 }
