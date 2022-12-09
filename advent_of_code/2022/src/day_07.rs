@@ -26,48 +26,41 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
     let mut current = root.clone();
 
     f.lines().for_each(|line| {
-        match line.split_once(' ') {
-            Some(("$", command)) => match command.split_once(' ') {
-                Some(("cd", dir)) => match dir {
-                    "/" => {
-                        current = root.clone();
-                    }
-                    ".." => {
-                        let parent_folder = current.parent.borrow().upgrade().unwrap();
-                        current = parent_folder;
-                    }
-                    _ => {
-                        // create new_dir
-                        let new_dir = Rc::new(FileSystemItem {
-                            name: String::from(dir),
-                            size: RefCell::new(0),
-                            parent: RefCell::new(Rc::downgrade(&current)), // parent of new_dir is current
-                            item_type: RefCell::new(ItemType::Dir(vec![])),
-                        });
-
-                        // Add new_dir as child to current
-                        if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
-                            siblings.push(new_dir.clone());
-                        }
-
-                        // move into new_dir
-                        current = new_dir;
-                    }
-                },
-                Some(("ls", _)) => (),
-                Some((command, _)) => panic!("unknown command: {command}"),
-                None => (),
-            },
-            Some(("dir", _)) => (),
-            Some((size, name)) => {
-                let new_file = Rc::new(FileSystemItem {
-                    name: String::from(name),
-                    size: RefCell::new(size.parse().unwrap()),
-                    parent: RefCell::new(Rc::downgrade(&current)), // parent of new_file is current
-                    item_type: RefCell::new(ItemType::File),       // files have no item_type
+        match line.split_whitespace().collect::<Vec<&str>>().as_slice() {
+            ["$", "cd", "/"] => current = root.clone(),
+            ["$", "cd", ".."] => {
+                let parent_folder = current.parent.borrow().upgrade().unwrap();
+                current = parent_folder;
+            }
+            ["$", "cd", dir] => {
+                // create new_dir
+                let new_dir = Rc::new(FileSystemItem {
+                    name: String::from(*dir),
+                    size: RefCell::new(0),
+                    parent: RefCell::new(Rc::downgrade(&current)), // parent of new_dir is current
+                    item_type: RefCell::new(ItemType::Dir(vec![])),
                 });
 
-                // While there's an ancestory, add file size to ancestor
+                // Add new_dir as child to current
+                if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
+                    siblings.push(new_dir.clone());
+                }
+
+                // move into new_dir
+                current = new_dir;
+            }
+            ["$", "ls"] => (),
+            ["$", command, ..] => panic!("unknown command: {command}"),
+            ["dir", _name] => (),
+            [size, name] => {
+                let new_file = Rc::new(FileSystemItem {
+                    name: String::from(*name),
+                    size: RefCell::new(size.parse().unwrap()),
+                    parent: RefCell::new(Rc::downgrade(&current)), // parent of new_file is current
+                    item_type: RefCell::new(ItemType::File),
+                });
+
+                // While there's an ancestor, add file size to ancestor
                 let mut ancestor = new_file.clone();
                 while let Some(older_ancestor) = ancestor.clone().parent.borrow().upgrade() {
                     older_ancestor
@@ -82,7 +75,7 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                     siblings.push(new_file);
                 }
             }
-            None => (),
+            _ => (),
         }
     });
 
