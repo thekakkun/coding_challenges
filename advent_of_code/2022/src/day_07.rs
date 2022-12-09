@@ -70,7 +70,7 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                     ancestor = older_ancestor;
                 }
 
-                // Add file to list of current item_type
+                // Add file to current's children
                 if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
                     siblings.push(new_file);
                 }
@@ -83,9 +83,9 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
 }
 
 pub fn part_1(input: Rc<FileSystemItem>, max_size: i32) -> i32 {
-    match &*input.item_type.borrow() {
+    match *input.item_type.borrow() {
         ItemType::File => 0,
-        ItemType::Dir(contents) => {
+        ItemType::Dir(ref contents) => {
             let mut total_size = if *input.size.borrow() <= max_size {
                 *input.size.borrow()
             } else {
@@ -109,7 +109,7 @@ pub fn part_2(input: Rc<FileSystemItem>, total_space: i32, required_space: i32) 
 
     if let ItemType::Dir(mut deletion_candidates) = (*input.item_type.borrow()).clone() {
         while let Some(candidate) = deletion_candidates.pop() {
-            if let ItemType::Dir(contents) = &*candidate.item_type.borrow() {
+            if let ItemType::Dir(ref contents) = *candidate.item_type.borrow() {
                 if required_space < unused_space + *candidate.size.borrow() {
                     smallest_dir = cmp::min(smallest_dir, *candidate.size.borrow());
                 }
