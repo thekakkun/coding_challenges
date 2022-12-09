@@ -1,12 +1,19 @@
 use std::cell::RefCell;
+use std::ops::Deref;
 use std::rc::{Rc, Weak};
+
+#[derive(Debug)]
+enum ItemType {
+    Dir(Vec<Rc<FileSystemItem>>),
+    File,
+}
 
 #[derive(Debug)]
 pub struct FileSystemItem {
     name: String,
     size: RefCell<i32>,
     parent: RefCell<Weak<FileSystemItem>>,
-    children: RefCell<Option<Vec<Rc<FileSystemItem>>>>,
+    item_type: RefCell<ItemType>,
 }
 
 pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
@@ -14,23 +21,20 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
         name: String::from("root"),
         size: RefCell::new(0),
         parent: RefCell::new(Weak::new()),
-        children: RefCell::new(Some(vec![])),
+        item_type: RefCell::new(ItemType::Dir(vec![])),
     });
     let mut current = root.clone();
 
     f.lines().for_each(|line| {
-        println!("{line}");
         match line.split_once(' ') {
             Some(("$", command)) => match command.split_once(' ') {
                 Some(("cd", dir)) => match dir {
                     "/" => {
                         current = root.clone();
-                        println!("Current = {}", current.name);
                     }
                     ".." => {
                         let parent_folder = current.parent.borrow().upgrade().unwrap();
                         current = parent_folder;
-                        println!("Current = {}", current.name);
                     }
                     _ => {
                         // create new_dir
@@ -38,11 +42,11 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                             name: String::from(dir),
                             size: RefCell::new(0),
                             parent: RefCell::new(Rc::downgrade(&current)), // parent of new_dir is current
-                            children: RefCell::new(Some(vec![])),
+                            item_type: RefCell::new(ItemType::Dir(vec![])),
                         });
 
                         // Add new_dir as child to current
-                        if let Some(ref mut siblings) = *current.children.borrow_mut() {
+                        if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
                             siblings.push(new_dir.clone());
                         }
 
@@ -60,11 +64,11 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                     name: String::from(name),
                     size: RefCell::new(size.parse().unwrap()),
                     parent: RefCell::new(Rc::downgrade(&current)), // parent of new_file is current
-                    children: RefCell::new(None),                  // files have no children
+                    item_type: RefCell::new(ItemType::File),       // files have no item_type
                 });
 
+                // While there's an ancestory, add file size to ancestor
                 let mut ancestor = new_file.clone();
-
                 while let Some(older_ancestor) = ancestor.clone().parent.borrow().upgrade() {
                     older_ancestor
                         .size
@@ -73,7 +77,8 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                     ancestor = older_ancestor;
                 }
 
-                if let Some(ref mut siblings) = *current.children.borrow_mut() {
+                // Add file to list of current item_type
+                if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
                     siblings.push(new_file);
                 }
             }
@@ -84,15 +89,30 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
     root
 }
 
-pub fn part_1(input: Rc<FileSystemItem>) -> i32 {
-    let count = 0;
+pub fn part_1(input: Rc<FileSystemItem>, max_size: i32) -> i32 {
+    match &*input.item_type.borrow() {
+        ItemType::File => 0,
+        ItemType::Dir(contents) => {
+            let mut total_size = if *input.size.borrow() <= max_size {
+                *input.size.borrow()
+            } else {
+                0
+            };
 
-    count
+            total_size += contents
+                .iter()
+                .cloned()
+                .filter(|content| match content.item_type.borrow().deref() {
+                    ItemType::Dir(_) => true,
+                    ItemType::File => false,
+                })
+                .map(|child| part_1(child, max_size))
+                .sum::<i32>();
+
+            total_size
+        }
+    }
 }
-
-// pub fn part_2(input: &str) -> usize {
-//     find_marker(input, 14).unwrap()
-// }
 
 #[cfg(test)]
 mod tests {
@@ -130,11 +150,11 @@ $ ls
         assert_eq!(48381165, *input.size.borrow());
     }
 
-    // #[test]
-    // fn example_part_1() {
-    //     let input = parse_file(EXAMPLE_FILE);
-    //     assert_eq!("CMZ", part_1(&input));
-    // }
+    #[test]
+    fn example_part_1() {
+        let input = parse_file(EXAMPLE_FILE);
+        assert_eq!(95437, part_1(input, 100000));
+    }
 
     // #[test]
     // fn example_part_2() {
