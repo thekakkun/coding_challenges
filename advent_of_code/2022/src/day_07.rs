@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::cell::RefCell;
 use std::cmp;
 use std::rc::{Rc, Weak};
