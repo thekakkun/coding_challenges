@@ -31,11 +31,11 @@ fn main() {
         part_1_split.duration_since(parse_file_split)
     );
 
-    // let part_2_result = day_08::part_2(input);
-    // let done = Instant::now();
-    // println!(
-    //     "Part 2: {} in {:?}",
-    //     part_2_result,
-    //     done.duration_since(part_1_split)
-    // );
+    let part_2_result = day_08::part_2(&input);
+    let done = Instant::now();
+    println!(
+        "Part 2: {} in {:?}",
+        part_2_result,
+        done.duration_since(part_1_split)
+    );
 }
