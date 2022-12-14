@@ -44,7 +44,7 @@ impl Bridge {
             self.add_knot()
         }
 
-        self.knots.last().unwrap()
+        self.knots.get(knot_ix).unwrap()
     }
 }
 
