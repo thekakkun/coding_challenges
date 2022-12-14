@@ -25,11 +25,11 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
         parent: RefCell::new(Weak::new()),
         item_type: RefCell::new(ItemType::Dir(vec![])),
     });
-    let mut current = root.clone();
+    let mut current = Rc::clone(&root);
 
     f.lines().for_each(|line| {
         match line.split_whitespace().collect::<Vec<&str>>().as_slice() {
-            ["$", "cd", "/"] => current = root.clone(),
+            ["$", "cd", "/"] => current = Rc::clone(&root),
             ["$", "cd", ".."] => {
                 let parent_folder = current.parent.borrow().upgrade().unwrap();
                 current = parent_folder;
@@ -45,7 +45,7 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
 
                 // Add new_dir as child to current
                 if let ItemType::Dir(ref mut siblings) = *current.item_type.borrow_mut() {
-                    siblings.push(new_dir.clone());
+                    siblings.push(Rc::clone(&new_dir));
                 }
 
                 // move into new_dir
@@ -63,8 +63,8 @@ pub fn parse_file(f: &str) -> Rc<FileSystemItem> {
                 });
 
                 // While there's an ancestor, add file size to ancestor
-                let mut ancestor = new_file.clone();
-                while let Some(older_ancestor) = ancestor.clone().parent.borrow().upgrade() {
+                let mut ancestor = Rc::clone(&new_file);
+                while let Some(older_ancestor) = Rc::clone(&ancestor).parent.borrow().upgrade() {
                     older_ancestor
                         .size
                         .replace_with(|&mut s| s + size.parse::<i32>().unwrap());
