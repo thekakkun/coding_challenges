@@ -1,22 +1,22 @@
 use std::{cmp::Ordering, collections::HashSet, hash::Hash};
 
-pub fn parse_file(f: &str) -> Bridge {
-    Bridge::new(f)
+pub fn parse_file(f: &str) -> Rope {
+    Rope::new(f)
 }
 
-pub fn part_1(bridge: &mut Bridge) -> usize {
-    bridge.get_nth_knot(1).position_history_size()
+pub fn part_1(rope: &mut Rope) -> usize {
+    rope.get_nth_knot(1).position_history_size()
 }
 
-pub fn part_2(bridge: &mut Bridge) -> usize {
-    bridge.get_nth_knot(9).position_history_size()
+pub fn part_2(rope: &mut Rope) -> usize {
+    rope.get_nth_knot(9).position_history_size()
 }
 
-pub struct Bridge {
+pub struct Rope {
     knots: Vec<Knot>,
 }
 
-impl Bridge {
+impl Rope {
     pub fn new(motions: &str) -> Self {
         let mut head_knot = Knot::new();
         motions
