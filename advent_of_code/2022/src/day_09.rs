@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::{cmp::Ordering, collections::HashSet, hash::Hash};
 
 pub fn parse_file(f: &str) -> Rope {
