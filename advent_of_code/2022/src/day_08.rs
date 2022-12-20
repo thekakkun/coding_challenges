@@ -174,10 +174,8 @@ pub fn part_2(input: &[Vec<Tree>]) -> usize {
     }
 
     proposed_trees
-        .iter()
-        .map(|(_, visibility)| {
-            visibility.north * visibility.south * visibility.east * visibility.west
-        })
+        .values()
+        .map(|visibility| visibility.north * visibility.south * visibility.east * visibility.west)
         .max()
         .unwrap()
 }
