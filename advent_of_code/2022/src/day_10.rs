@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub fn parse_file(f: &str) -> impl Iterator<Item = (i32, i32)> + '_ {
     let instructions = f.lines().filter_map(|line| match line.split_once(' ') {
         None if line == "noop" => Some(Instruction::Noop),

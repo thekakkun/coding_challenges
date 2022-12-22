@@ -1,4 +1,8 @@
-use std::{cell::RefCell, collections::VecDeque};
+use std::{
+    cell::RefCell,
+    collections::VecDeque,
+    ops::{Add, Mul},
+};
 
 use regex::Regex;
 
@@ -7,7 +11,7 @@ pub fn parse_file(f: &str) -> Barrel {
         r"(?m)Monkey (?P<id>\d+):$
   Starting items: (?P<items>.*)$
   Operation: new = old (?P<operator>[\+\-\*/]) (?P<operand>(?:old|\d+))$
-  Test: divisible by (?P<test>\d*)$
+  Test: divisible by (?P<modulus>\d*)$
     If true: throw to monkey (?P<t_target>\d+)$
     If false: throw to monkey (?P<f_target>\d+)$",
     )
@@ -16,34 +20,62 @@ pub fn parse_file(f: &str) -> Barrel {
     Barrel::new(
         re.captures_iter(f)
             .map(|cap| {
-                Monkey::from_str(
-                    cap.name("items").unwrap().as_str(),
-                    (
-                        cap.name("operator").unwrap().as_str(),
-                        cap.name("operand").unwrap().as_str(),
-                    ),
-                    (
-                        cap.name("test").unwrap().as_str(),
-                        cap.name("t_target").unwrap().as_str(),
-                        cap.name("f_target").unwrap().as_str(),
-                    ),
-                )
+                let items = cap
+                    .name("items")
+                    .unwrap()
+                    .as_str()
+                    .split(", ")
+                    .map(|worry| worry.parse().expect("unable to parse value"))
+                    .collect();
+
+                let operator = match cap.name("operator").unwrap().as_str() {
+                    "+" => Add::add,
+                    "*" => Mul::mul,
+                    op => panic!("unknown operator: {op}"),
+                };
+                let operand = cap.name("operand").unwrap().as_str().parse().ok();
+
+                let modulus = cap
+                    .name("modulus")
+                    .unwrap()
+                    .as_str()
+                    .parse()
+                    .expect("unable to parse modulus");
+                let target = (
+                    cap.name("t_target")
+                        .unwrap()
+                        .as_str()
+                        .parse()
+                        .expect("unable to parse t_target"),
+                    cap.name("f_target")
+                        .unwrap()
+                        .as_str()
+                        .parse()
+                        .expect("unable to parse f_target"),
+                );
+
+                Monkey::new(items, operator, operand, modulus, target)
             })
             .collect(),
     )
 }
 
-pub fn part_1(mut input: Barrel) -> u32 {
-    (0..20).for_each(|_| input.do_round());
-
-    input.inspection_count.sort();
-    input.inspection_count.iter().rev().take(2).product()
+pub fn part_1(mut input: Barrel) -> u64 {
+    (0..20).for_each(|_| input.do_round(|worry| (worry / 3).try_into().unwrap()));
+    input.get_monkey_business()
 }
-pub fn part_2(mut input: Barrel) -> u32 {
-    (0..10000).for_each(|_| input.do_round());
 
-    input.inspection_count.sort();
-    input.inspection_count.iter().rev().take(2).product()
+pub fn part_2(mut input: Barrel) -> u64 {
+    let common_mod = input
+        .monkeys
+        .iter()
+        .map(|monkey| monkey.modulus as u32)
+        .product::<u32>();
+
+    (0..10000)
+        .for_each(|_| input.do_round(|worry| (worry % common_mod as u64).try_into().unwrap()));
+
+    input.get_monkey_business()
 }
 
 pub struct Barrel {
@@ -59,80 +91,60 @@ impl Barrel {
         }
     }
 
-    pub fn do_round(&mut self) {
+    pub fn do_round(&mut self, worry_manager: impl Fn(u64) -> u32) {
         for (id, monkey) in self.monkeys.iter().enumerate() {
-            while let Some(item) = monkey.items.borrow_mut().pop_front() {
-                let new_val = (monkey.operation)(item);
-                let target = (monkey.throw_to)(new_val);
-
+            while let Some(worry) = monkey.items.borrow_mut().pop_front() {
                 self.inspection_count[id] += 1;
 
-                self.monkeys[target].items.borrow_mut().push_back(new_val);
+                let new_worry = worry_manager((monkey.operator)(
+                    worry as u64,
+                    match monkey.operand {
+                        Some(operand) => operand.into(),
+                        None => worry,
+                    } as u64,
+                ));
+
+                let target = if new_worry % monkey.modulus as u32 == 0 {
+                    monkey.target.0
+                } else {
+                    monkey.target.1
+                };
+
+                self.monkeys[target].items.borrow_mut().push_back(new_worry);
             }
         }
+    }
+
+    pub fn get_monkey_business(&mut self) -> u64 {
+        self.inspection_count.sort();
+
+        self.inspection_count[self.monkeys.len() - 1] as u64
+            * self.inspection_count[self.monkeys.len() - 2] as u64
     }
 }
 
 pub struct Monkey {
     items: RefCell<VecDeque<u32>>,
-    operation: Box<dyn Fn(u32) -> u32>,
-    throw_to: Box<dyn Fn(u32) -> usize>,
+    operator: Box<dyn Fn(u64, u64) -> u64>,
+    operand: Option<u8>,
+    modulus: u8,
+    target: (usize, usize),
 }
 
 impl Monkey {
-    pub fn from_str(
-        items: &str,
-        (op, operand): (&str, &str),
-        (test, t_target, f_target): (&str, &str, &str),
+    pub fn new(
+        items: Vec<u32>,
+        operator: impl Fn(u64, u64) -> u64 + 'static,
+        operand: Option<u8>,
+        modulus: u8,
+        target: (usize, usize),
     ) -> Self {
         Self {
-            items: RefCell::new(Monkey::items_from_str(items)),
-            operation: Box::new(Monkey::operation_from_str(op, operand)),
-            throw_to: Box::new(Monkey::throw_to_from_str(test, t_target, f_target)),
-        }
-    }
-
-    fn items_from_str(items: &str) -> VecDeque<u32> {
-        items
-            .split(", ")
-            .map(|item| item.parse().unwrap())
-            .collect()
-    }
-
-    fn operation_from_str(operator: &str, operand: &str) -> impl Fn(u32) -> u32 {
-        let operator = operator.to_owned();
-        let operand = operand.to_owned();
-
-        move |val| {
-            let new_val = if let Ok(num) = operand.parse::<u32>() {
-                match operator.as_str() {
-                    "+" => val + num,
-                    "*" => val * num,
-                    _ => panic!("unknown operator: {operator}"),
-                }
-            } else if operator == "*" && operand == "old" {
-                val * val
-            } else {
-                panic!("unable to parse operation: {operator} {operand}");
-            };
-
-            new_val / 3
-        }
-    }
-
-    fn throw_to_from_str(test: &str, t_target: &str, f_target: &str) -> impl Fn(u32) -> usize {
-        if let (Ok(test), Ok(t_target), Ok(f_target)) =
-            (test.parse::<u32>(), t_target.parse(), f_target.parse())
-        {
-            move |val| {
-                if val % test == 0 {
-                    t_target
-                } else {
-                    f_target
-                }
-            }
-        } else {
-            panic!("unable to parse throwing rules")
+            items: RefCell::new(items.into()),
+            operator: Box::new(operator),
+            operand,
+            modulus,
+            target,
         }
     }
 }
@@ -143,31 +155,56 @@ mod tests {
 
     #[test]
     fn parse_example() {
-        let mut input = parse_file(EXAMPLE_FILE);
+        let input = parse_file(EXAMPLE_FILE);
         assert_eq!(4, input.monkeys.len());
         assert_eq!(*input.monkeys[0].items.borrow(), [79, 98]);
+        assert_eq!(*input.monkeys[1].items.borrow(), [54, 65, 75, 74]);
+    }
 
-        input.do_round();
+    #[test]
+    fn part_1_operation() {
+        let mut input = parse_file(EXAMPLE_FILE);
+        let worry_manager = |worry: u64| -> u32 { (worry / 3).try_into().unwrap() };
+
+        input.do_round(worry_manager);
         assert_eq!(*input.monkeys[0].items.borrow(), [20, 23, 27, 26]);
         assert_eq!(
             *input.monkeys[1].items.borrow(),
             [2080, 25, 167, 207, 401, 1046]
         );
 
-        input.do_round();
+        input.do_round(worry_manager);
         assert_eq!(*input.monkeys[0].items.borrow(), [695, 10, 71, 135, 350]);
     }
 
     #[test]
     fn example_part_1() {
         let input = parse_file(EXAMPLE_FILE);
-        assert_eq!(10605, part_1(input));
+        assert_eq!(10605, part_1(input))
+    }
+
+    #[test]
+    fn part_2_operation() {
+        let mut input = parse_file(EXAMPLE_FILE);
+        let common_mod: u32 = input
+            .monkeys
+            .iter()
+            .map(|monkey| -> u32 { monkey.modulus.into() })
+            .product();
+        let worry_manager = |worry: u64| -> u32 { (worry % common_mod as u64).try_into().unwrap() };
+
+        input.do_round(worry_manager);
+        assert_eq!(input.inspection_count, [2, 4, 3, 6]);
+
+        input = parse_file(EXAMPLE_FILE);
+        (1..=20).for_each(|_| input.do_round(worry_manager));
+        assert_eq!(input.inspection_count, [99, 97, 8, 103]);
     }
 
     #[test]
     fn example_part_2() {
         let input = parse_file(EXAMPLE_FILE);
-        assert_eq!(2713310158, part_2(input));
+        assert_eq!(2713310158, part_2(input))
     }
 
     const EXAMPLE_FILE: &str = "\

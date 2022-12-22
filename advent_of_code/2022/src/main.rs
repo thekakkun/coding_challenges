@@ -34,14 +34,14 @@ fn main() {
         part_1_split.duration_since(parse_file_split)
     );
 
-    // // let input = day_11::parse_file(&f);
-    // // let part_1_split = Instant::now();
+    let input = day_11::parse_file(&f);
+    let part_1_split = Instant::now();
 
-    // let part_2_result = day_11::part_2(input);
-    // let done = Instant::now();
-    // println!(
-    //     "Part 2: {} in {:?}",
-    //     part_2_result,
-    //     done.duration_since(part_1_split)
-    // );
+    let part_2_result = day_11::part_2(input);
+    let done = Instant::now();
+    println!(
+        "Part 2: {} in {:?}",
+        part_2_result,
+        done.duration_since(part_1_split)
+    );
 }
