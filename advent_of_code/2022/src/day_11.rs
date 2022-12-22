@@ -61,26 +61,25 @@ pub fn parse_file(f: &str) -> Barrel {
 }
 
 pub fn part_1(mut input: Barrel) -> u64 {
-    (0..20).for_each(|_| input.do_round(|worry| (worry / 3).try_into().unwrap()));
+    (0..20).for_each(|_| input.do_round(|worry| worry / 3));
     input.get_monkey_business()
 }
 
 pub fn part_2(mut input: Barrel) -> u64 {
-    let common_mod = input
+    let common_mod: u64 = input
         .monkeys
         .iter()
-        .map(|monkey| monkey.modulus as u32)
-        .product::<u32>();
+        .map(|monkey| monkey.modulus as u64)
+        .product();
 
-    (0..10000)
-        .for_each(|_| input.do_round(|worry| (worry % common_mod as u64).try_into().unwrap()));
+    (0..10000).for_each(|_| input.do_round(|worry| worry % common_mod));
 
     input.get_monkey_business()
 }
 
 pub struct Barrel {
     monkeys: Vec<Monkey>,
-    inspection_count: Vec<u32>,
+    inspection_count: Vec<u64>,
 }
 
 impl Barrel {
@@ -91,20 +90,20 @@ impl Barrel {
         }
     }
 
-    pub fn do_round(&mut self, worry_manager: impl Fn(u64) -> u32) {
+    pub fn do_round(&mut self, worry_manager: impl Fn(u64) -> u64) {
         for (id, monkey) in self.monkeys.iter().enumerate() {
             while let Some(worry) = monkey.items.borrow_mut().pop_front() {
                 self.inspection_count[id] += 1;
 
                 let new_worry = worry_manager((monkey.operator)(
-                    worry as u64,
+                    worry,
                     match monkey.operand {
                         Some(operand) => operand.into(),
                         None => worry,
-                    } as u64,
+                    },
                 ));
 
-                let target = if new_worry % monkey.modulus as u32 == 0 {
+                let target = if new_worry % monkey.modulus as u64 == 0 {
                     monkey.target.0
                 } else {
                     monkey.target.1
@@ -118,13 +117,13 @@ impl Barrel {
     pub fn get_monkey_business(&mut self) -> u64 {
         self.inspection_count.sort();
 
-        self.inspection_count[self.monkeys.len() - 1] as u64
-            * self.inspection_count[self.monkeys.len() - 2] as u64
+        self.inspection_count[self.monkeys.len() - 1]
+            * self.inspection_count[self.monkeys.len() - 2]
     }
 }
 
 pub struct Monkey {
-    items: RefCell<VecDeque<u32>>,
+    items: RefCell<VecDeque<u64>>,
     operator: Box<dyn Fn(u64, u64) -> u64>,
     operand: Option<u8>,
     modulus: u8,
@@ -133,7 +132,7 @@ pub struct Monkey {
 
 impl Monkey {
     pub fn new(
-        items: Vec<u32>,
+        items: Vec<u64>,
         operator: impl Fn(u64, u64) -> u64 + 'static,
         operand: Option<u8>,
         modulus: u8,
@@ -164,7 +163,7 @@ mod tests {
     #[test]
     fn part_1_operation() {
         let mut input = parse_file(EXAMPLE_FILE);
-        let worry_manager = |worry: u64| -> u32 { (worry / 3).try_into().unwrap() };
+        let worry_manager = |worry| worry / 3;
 
         input.do_round(worry_manager);
         assert_eq!(*input.monkeys[0].items.borrow(), [20, 23, 27, 26]);
@@ -186,12 +185,12 @@ mod tests {
     #[test]
     fn part_2_operation() {
         let mut input = parse_file(EXAMPLE_FILE);
-        let common_mod: u32 = input
+        let common_mod: u64 = input
             .monkeys
             .iter()
-            .map(|monkey| -> u32 { monkey.modulus.into() })
+            .map(|monkey| -> u64 { monkey.modulus.into() })
             .product();
-        let worry_manager = |worry: u64| -> u32 { (worry % common_mod as u64).try_into().unwrap() };
+        let worry_manager = |worry| worry % common_mod;
 
         input.do_round(worry_manager);
         assert_eq!(input.inspection_count, [2, 4, 3, 6]);
