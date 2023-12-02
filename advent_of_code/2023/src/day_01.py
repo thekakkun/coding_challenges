@@ -1,4 +1,4 @@
-import io
+from io import TextIOBase
 from typing import Optional
 
 from utils import stopwatch
@@ -7,7 +7,7 @@ ParsedData = list[str]
 
 
 @stopwatch
-def parse(input: io.TextIOBase) -> ParsedData:
+def parse(input: TextIOBase) -> ParsedData:
     return list(input)
 
 

@@ -1,4 +1,4 @@
-import io
+from io import StringIO
 
 from src.day_01 import *
 
@@ -18,11 +18,11 @@ zoneight234
 
 
 def test_part_1():
-    assert part_1(io.StringIO(input1)) == 142
+    assert part_1(StringIO(input1)) == 142
 
 
 def test_part_2():
-    assert part_2(io.StringIO(input2)) == 281
+    assert part_2(StringIO(input2)) == 281
 
 
 def test_find_digit():
@@ -37,7 +37,7 @@ def test_find_digit():
         "eight": 8,
         "nine": 9,
     }
-    assert [find_digit(line, digits) for line in io.StringIO(input2)] == [
+    assert [find_digit(line, digits) for line in StringIO(input2)] == [
         2,
         8,
         1,
@@ -60,7 +60,7 @@ def test_find_digit_reverse():
         "eight": 8,
         "nine": 9,
     }
-    assert [find_digit(line, digits, reverse=True) for line in io.StringIO(input2)] == [
+    assert [find_digit(line, digits, reverse=True) for line in StringIO(input2)] == [
         9,
         3,
         3,
