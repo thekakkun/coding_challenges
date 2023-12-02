@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import reduce
 from io import TextIOBase
 from typing import Self
 
@@ -20,6 +21,16 @@ class CubeSet:
         }
 
         return CubeSet(**cubes)
+
+    def min_required(self, other: Self) -> Self:
+        return CubeSet(
+            red=max(self.red, other.red),
+            green=max(self.green, other.green),
+            blue=max(self.blue, other.blue),
+        )
+
+    def power(self) -> int:
+        return self.red * self.blue * self.green
 
     def __lt__(self, other: Self) -> bool:
         return (
@@ -46,32 +57,36 @@ class CubeSet:
         )
 
 
-ParsedData = list[list[CubeSet]]
+ParsedData = dict[int, list[CubeSet]]
 
 
 @stopwatch
 def parse(input: TextIOBase) -> ParsedData:
-    data = []
+    data = {}
 
     for game in input:
-        _, reveals = game.split(": ")
-        data.append([CubeSet.from_reveal(reveal) for reveal in reveals.split("; ")])
+        game_id, reveals = game.split(": ")
+        _, id = game_id.split(" ")
+        data[int(id)] = [CubeSet.from_reveal(reveal) for reveal in reveals.split("; ")]
 
     return data
 
 
 @stopwatch
 def part_1(data: ParsedData, bag: CubeSet = CubeSet(red=12, green=13, blue=14)) -> int:
-    id_sum = 0
+    return sum(
+        id for id, game in data.items() if all(cube_set <= bag for cube_set in game)
+    )
 
-    for i, game in enumerate(data):
-        if all(cube_set <= bag for cube_set in game):
-            id_sum += i + 1
 
-    return id_sum
+@stopwatch
+def part_2(data: ParsedData) -> int:
+    min_sets = [reduce(CubeSet.min_required, game) for game in data.values()]
+    return sum(cubeset.power() for cubeset in min_sets)
 
 
 if __name__ == "__main__":
     with open("input/day_02.txt", "r") as f:
         data = parse(f)
         print(part_1(data))
+        print(part_2(data))
