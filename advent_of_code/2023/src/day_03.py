@@ -7,6 +7,7 @@ from typing import TypedDict
 from utils import stopwatch
 
 Point = tuple[int, int]
+PointHash = tuple[int, int]
 
 
 class Number(TypedDict):
@@ -28,7 +29,7 @@ class Schematic:
     symbols: list[Symbol] = field(default_factory=list, init=False)
 
     # Uses a spatial hash to chunk together nearby numbers into cells.
-    bucket: defaultdict[tuple[int, int], set[int]] = field(
+    bucket: defaultdict[PointHash, set[int]] = field(
         default_factory=lambda: defaultdict(set)
     )
     cell_size: int = 5
@@ -51,7 +52,11 @@ class Schematic:
                     if c not in [".", "\n"]:
                         self.symbols.append({"coord": (i, j), "val": c})
 
-    def point_hash(self, point: Point) -> tuple[int, int]:
+    def point_hash(self, point: Point) -> PointHash:
+        """Turns point into a hash.
+
+        In effect, lowers the resolution of the schematic into pixels of size `cell_size`.
+        """
         return (point[0] // self.cell_size, point[1] // self.cell_size)
 
     def insert_number(self, value: int, points: list[Point]):
@@ -61,7 +66,11 @@ class Schematic:
         for point in points:
             self.bucket[self.point_hash(point)].add(id)
 
-    def get_cells(self, point: Point) -> set[tuple[int, int]]:
+    def get_cells(self, point: Point) -> set[PointHash]:
+        """Get cells that point belongs to or is immediately adjacent to.
+
+        This wil break if cell_size is set to 1, but hey, why would anyone do such a thing?
+        """
         cells = set()
 
         i, j = point
