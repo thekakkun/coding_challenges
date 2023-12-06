@@ -40,3 +40,17 @@ humidity-to-location map:
 def test_parse():
     seeds, map_func = parse(StringIO(input))
     assert [map_func(seed) for seed in seeds] == [82, 43, 86, 35]
+
+
+def test_part_2():
+    seeds, map_func = parse(StringIO(input))
+
+    assert part_2(seeds, map_func) == 46
+
+
+def test_conversion():
+    cat = Category()
+
+    print(cat)
+
+    assert False

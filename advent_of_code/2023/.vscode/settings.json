@@ -1,6 +1,7 @@
 {
     "python.analysis.typeCheckingMode": "basic",
     "python.testing.pytestArgs": [
+        "--memray",
         "tests"
     ],
     "python.testing.unittestEnabled": false,
