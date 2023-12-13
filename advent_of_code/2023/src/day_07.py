@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from functools import total_ordering
 from io import TextIOBase
 from typing import Self
+from collections import Counter
 
 from utils import stopwatch
 
@@ -28,12 +29,7 @@ class Hand:
         return KINDS.index(hand)
 
     def card_count(self) -> dict[str, int]:
-        result = {}
-
-        for card in self.hand:
-            result[card] = result.get(card, 0) + 1
-
-        return result
+        return Counter(self.hand)
 
     def __lt__(self, other: Self) -> bool:
         if self.kind == other.kind:
